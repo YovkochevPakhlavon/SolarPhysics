@@ -1,5 +1,4 @@
-````markdown
-## Callisto FITS Data Analysis with Python
+# Callisto FITS Data Analysis with Python
 
 This repository provides step-by-step Python scripts and Jupyter Notebooks for analyzing solar radio spectrograms in `.fit.gz` format (from instruments like CALLISTO). The aim is to help learners learn how to:
 
