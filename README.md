@@ -97,7 +97,33 @@ Optional (for notebooks):
 ```bash
 pip install jupyter
 ```
+# 🧪 Conda Environment Setup
 
+This project uses a Conda environment defined in ⁠ environment.yml ⁠. Follow the steps below to set it up on your system.
+
+---
+
+## 📥 Prerequisites
+
+Make sure you have [Miniconda](https://docs.conda.io/en/latest/miniconda.html) or [Anaconda](https://www.anaconda.com/products/distribution) installed.
+
+---
+
+## ⚙️ Setup Instructions
+
+### ✅ Step 1: Navigate to the Project Directory
+
+Open your terminal and go to the folder where this project is located:
+
+```bash
+cd path/to/this/project
+
+
+conda env create -f environment.yml
+
+conda activate your_env_name
+
+conda env update -f environment.yml --prune
 ---
 
 ## 🚀 How to Run
