@@ -52,6 +52,7 @@ parso @ file:///home/conda/feedstock_root/build_artifacts/parso_1733271261340/wo
 pickleshare @ file:///home/conda/feedstock_root/build_artifacts/pickleshare_1733327343728/work
 pillow==11.2.1
 platformdirs @ file:///home/conda/feedstock_root/build_artifacts/bld/rattler-build_platformdirs_1746710438/work
+ply @ file:///home/conda/feedstock_root/build_artifacts/ply_1733239724146/work
 prompt_toolkit @ file:///home/conda/feedstock_root/build_artifacts/prompt-toolkit_1744724089886/work
 propcache==0.3.1
 psutil @ file:///D:/bld/psutil_1740663127374/work
@@ -59,6 +60,8 @@ pure_eval @ file:///home/conda/feedstock_root/build_artifacts/pure_eval_17335694
 pyerfa==2.0.1.5
 Pygments @ file:///home/conda/feedstock_root/build_artifacts/pygments_1736243443484/work
 pyparsing==3.2.3
+PyQt5==5.15.11
+PyQt5_sip @ file:///D:/bld/pyqt-split_1746849509548/work/pyqt_sip
 python-dateutil @ file:///home/conda/feedstock_root/build_artifacts/python-dateutil_1733215673016/work
 pytz==2025.2
 pywin32==307
@@ -69,11 +72,14 @@ requests==2.32.3
 requests-file==2.1.0
 requests-toolbelt==1.0.0
 scipy==1.15.3
+sip @ file:///D:/bld/sip_1745411214637/work
 six @ file:///home/conda/feedstock_root/build_artifacts/six_1733380938961/work
 soupsieve==2.7
 spacepy==0.7.0
 stack_data @ file:///home/conda/feedstock_root/build_artifacts/stack_data_1733569443808/work
 sunpy==6.1.1
+toml @ file:///home/conda/feedstock_root/build_artifacts/toml_1734091811753/work
+tomli @ file:///home/conda/feedstock_root/build_artifacts/tomli_1733256695513/work
 tornado @ file:///D:/bld/tornado_1747384480501/work
 tqdm==4.67.1
 traitlets @ file:///home/conda/feedstock_root/build_artifacts/traitlets_1733367359838/work
