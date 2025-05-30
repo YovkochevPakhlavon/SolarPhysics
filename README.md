@@ -12,7 +12,7 @@ This repository provides step-by-step Python scripts and Jupyter Notebooks for a
 
 ##  Folder Structure
 
-### `basic/`
+### `Basic_Image_Processing/`
 **Description:**  
 The simplest working script to load and visualize a `.fit.gz` file.
 
