@@ -19,6 +19,7 @@ The simplest working script to load and visualize a `.fit.gz` file.
 **Files:**
 - `mostbasic.py` — Load and plot a FITS file using Matplotlib.
 - `webaccess.py` — Demonstrates how to download CALLISTO data directly from the web and visualize it. Uses `urllib` or similar to fetch and display data.
+- `fit_preprocess_from_url.py` -Download a FITS file from a given URL and perform different background subtraction methods on the spectrogram data. Saves each processed spectrogram as PNG images.
 
 ---
 
@@ -29,6 +30,7 @@ Focuses on removing background noise from the data for clearer signal detection.
 **Files:**
 - `constant.py` — Subtracts the mean signal (a constant background) from the data.
 - `individual.py` — Subtracts a user-defined background at a specific time or frequency range.
+- `different_background_subtraction.py` - Module for processing FITS radio data files (Using different background subtraction techniques) and visualizing spectrograms with various enhancements.
 
 ---
 
@@ -38,6 +40,7 @@ Combines FITS data from different instruments (e.g., BIR and ALMATY) in the freq
 
 **Files:**
 - `MergeFrequency.py` — Merges and displays spectrograms from different FITS files in one unified plot.
+- `merge_fits_spectrogram.py` -This script provides tools to merge two spectrogram FITS files by their frequency axes and visualize the result. It supports optional user-defined frequency slicing and handles automatic frequency sorting.
 
 ---
 
@@ -53,6 +56,34 @@ Improves time and frequency axis labeling for better readability.
 
 ---
 
+### `SolarFlareAnalyze/`
+**Description:**  
+Analyzes Solar Flares.
+
+**Files:**
+- `solar_flare_gauss_fit.py` — This module downloads and processes solar flare flux data from a GOES FITS file, performs Gaussian fitting on a selected time window of the flux, and plots the results.
+
+- `goes_xray_flux_analysis.py` — This module loads GOES-16 X-ray flux data from a netCDF file, extracts specified variables, identifies peak and surrounding minima, and optionally plots the flux time series with annotated peaks and minima.
+
+---
+
+### `CME_Analysis/`
+**Description:**  
+Callisto CME Analyzer
+
+This scripts read one or more FITS files containing radio dynamic spectra (from Callisto instruments), plot the data, and allow the user to select a frequency drift (typically of a CME). The scripts then calculate:
+
+- Electron density
+- Solar radial distance 
+- Frequency drift rate (df/dt)
+- Velocity of the emission front
+
+**Files:**
+- `Newkirk_model.py` — Uses Newkirk model to compute the electron density, frequency drift rate (df/dt), height and CME speed.
+
+- `Leblanc_model.py` — Uses Leblanc model to compute the electron density, frequency drift rate (df/dt), height and CME speed.
+
+---
 ##  Requirements
 
 You can install the required packages using pip:
