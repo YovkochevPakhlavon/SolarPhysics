@@ -1,12 +1,14 @@
 # Callisto FITS Data Analysis with Python
 
-This repository provides step-by-step Python scripts and Jupyter Notebooks for analyzing solar radio spectrograms in `.fit.gz` format (from instruments like CALLISTO). The aim is to help learners learn how to:
+This repository provides step-by-step Python scripts and Jupyter Notebooks for analyzing solar radio spectrograms in `.fit.gz` format (from instruments like CALLISTO). The aim is to help new users learn how to:
 
 - Load and visualize FITS files
 - Perform background subtraction
 - Merge data from different instruments
 - Improve axis labeling and visual clarity
 - Download and handle data from online sources
+- Analyze CME events (using different models) 
+- Analyze Solar Flares 
 
 ---
 
@@ -56,7 +58,7 @@ Improves time and frequency axis labeling for better readability.
 
 ---
 
-### `SolarFlareAnalyze/`
+### `SolarFlareAnalsis/`
 **Description:**  
 Analyzes Solar Flares.
 
