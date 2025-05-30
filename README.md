@@ -58,7 +58,7 @@ Improves time and frequency axis labeling for better readability.
 
 ---
 
-### `SolarFlareAnalsis/`
+### `SolarFlareAnalysis/`
 **Description:**  
 Analyzes Solar Flares.
 
