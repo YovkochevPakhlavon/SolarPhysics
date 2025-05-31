@@ -229,7 +229,7 @@ def analyze_clicks(coords, harmonic, freq_axis, out_prefix):
             f.write(f"{t:.2f}, {f_:.2f}, {n:.2e}, {r:.2f}\n")
 
     # Print summary
-    print('\nStatistical CME Velocity:')
+    print('\nStatistical CME Velocity (using Leblanc model):')
     print(f"Mean Speed     = {np.mean(speeds):.1f} km/s")
     print(f"Median Speed   = {np.median(speeds):.1f} km/s")
     v1 = (Rs[-1] - Rs[0]) / (times[-1] - times[0]) * RSUN_KM
