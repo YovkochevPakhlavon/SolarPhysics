@@ -3,7 +3,9 @@ LEBLANC CME SPEED ANALYSIS TOOL
 --------------------------------
 
 Created on Tue Aug 27 15:34:53 2024
-
+Author: Christian Monstein, ETH Zurich
+Adapted and modularized by: Abraham-Alowonle Joseph-judah
+Date: 2025-05-20
 
 Description:
 This script reads Callisto FITS dynamic spectra, allows user interaction
@@ -15,6 +17,19 @@ Leblanc Model:
     Where:
         r: radial distance [Rsun]
         n: electron density [cm^-3]
+
+Usage:
+    In a script or Jupyter notebook, call:
+        run_leblanc_analysis(
+            fits_path="C:/Users/YourName/Downloads",
+            file_name="LEARMONTH_20230612_064000_01.fit.gz",
+            harmonic=1,
+            zoom=[1200, 1800, 20, 180],
+            vmin=-5,
+            vmax=25
+        )
+        
+Left click to mark points. Right click to finish analysis.
 """
 
 import numpy as np
@@ -28,6 +43,34 @@ import os
 RSUN_KM = 695700.0  # Solar radius in km
 LEBLANC_COEFFS = {'a': 1.36e6, 'b': 1.68e8, 'alpha': 2.14, 'beta': 6.13}
 ELECTRON_CONSTANT = 8.977e-3  # MHz * sqrt(cm^-3)
+
+
+def in_jupyter():
+    """Detect if code is running in a Jupyter Notebook."""
+    try:
+        from IPython import get_ipython
+        shell = get_ipython().__class__.__name__
+        return shell == 'ZMQInteractiveShell'
+    except:
+        return False
+
+def set_backend_for_interactivity():
+    """Set backend to 'qt' or fallback in Jupyter for interactive plots."""
+    if in_jupyter():
+        try:
+            from IPython import get_ipython
+            get_ipython().run_line_magic('matplotlib', 'qt')
+            print("Using Qt backend for interactive plotting.")
+        except Exception as e:
+            try:
+                get_ipython().run_line_magic('matplotlib', 'widget')
+                print("Qt backend failed. Using widget backend instead.")
+            except:
+                print("Could not set interactive backend in Jupyter.")
+
+# Set backend before plotting
+set_backend_for_interactivity()
+
 
 def leblanc_model_equation(r, n_value):
     """Leblanc density model equation to solve for radius."""
@@ -58,6 +101,7 @@ def find_r_from_density(n):
 def run_leblanc_analysis(fits_path, file_name, harmonic=1, zoom=[1200, 1800, 20, 180], vmin=-5, vmax=25):
     """
     Runs the Leblanc-based CME speed analysis on a given FITS file.
+    Supports dynamic mouse interaction in both Jupyter and standard environments.
 
     Parameters
     ----------
@@ -74,6 +118,7 @@ def run_leblanc_analysis(fits_path, file_name, harmonic=1, zoom=[1200, 1800, 20,
     vmax : float, optional
         Maximum dB for plot color scale.
     """
+
     full_path = os.path.join(fits_path, file_name)
     hdu = fits.open(full_path)
     header = hdu[0].header
@@ -107,8 +152,10 @@ def run_leblanc_analysis(fits_path, file_name, harmonic=1, zoom=[1200, 1800, 20,
             self.ax = ax
 
         def __call__(self, event):
-            if event.button == 3:  # Right-click ends session
-                fig.canvas.mpl_disconnect(cid)
+            if event.inaxes != self.ax:
+                return
+            if event.button == 3:  # Right-click to end
+                self.fig.canvas.mpl_disconnect(self.cid)
                 analyze_clicks(coords, harmonic, freq, os.path.splitext(full_path)[0])
             else:
                 x, y = event.xdata, event.ydata
@@ -117,7 +164,7 @@ def run_leblanc_analysis(fits_path, file_name, harmonic=1, zoom=[1200, 1800, 20,
                 coords.append((x, y))
 
     mouse = MouseMonitor(fig, ax)
-    cid = fig.canvas.mpl_connect('button_press_event', mouse)
+    mouse.cid = fig.canvas.mpl_connect('button_press_event', mouse)
     plt.show()
 
 def analyze_clicks(coords, harmonic, freq_axis, out_prefix):
@@ -188,14 +235,3 @@ def analyze_clicks(coords, harmonic, freq_axis, out_prefix):
     v1 = (Rs[-1] - Rs[0]) / (times[-1] - times[0]) * RSUN_KM
     print(f"1st Order Speed = {v1:.1f} km/s")
 
-
-# from leblanc_analysis import run_leblanc_analysis
-
-# run_leblanc_analysis(
-#     fits_path="C:/Users/Analysis/",
-#     file_name="LEARMONTH_20230612_064000_01.fit.gz",
-#     harmonic=1,
-#     zoom=[1200, 1800, 20, 180],
-#     vmin=-5,
-#     vmax=25
-# )

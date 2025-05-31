@@ -1,9 +1,14 @@
 """
-Callisto CME Analyzer
+NEWKIRK MODEL CME SPEED ANALYSIS TOOL
+------------------------------------------
 
+Created on Tue Aug 27 15:34:53 2024
+
+
+Description:
 This script reads one or more FITS files containing radio dynamic spectra
 (from Callisto instruments), plots the data, and allows the user to select
-a frequency drift (typically of a CME). The script then calculates:
+a frequency drift (typically of a CME). The script then calculates (using Newkirk density model):
 
 - Electron density
 - Solar radial distance (Newkirk model)
@@ -11,22 +16,20 @@ a frequency drift (typically of a CME). The script then calculates:
 - Velocity of the emission front
 
 Author: Christian Monstein, ETH Zurich
-
-
 Adapted and modularized by: Abraham-Alowonle Joseph-judah
 Date: 2025-05-20
 
 Usage:
     In a script or Jupyter notebook, call:
-        run_cme_analysis(
-            path='data/',
-            file_pattern='BLENSW_20180330*_01.fit.gz',
-            harmonic=2,
-            newkirk=1.8,
-            zoom=[700, 1700, 30, 70],
-            vmin=-5,
-            vmax=25
-        )
+            run_cme_Newkirk_analysis(
+                path='data/',
+                file_pattern='LEARMONTH_20230612_064000_01.fit.gz',
+                harmonic=2,
+                newkirk=1.8,
+                zoom=[1200, 1800, 20, 180],
+                vmin=-5,
+                vmax=25
+            )
 
 Left click to mark points. Right click to finish analysis.
 """
@@ -36,13 +39,39 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from astropy.io import fits
+import os
 
 # Constants
 RSUN_KM = 695700.0  # Solar radius in kilometers
 ELECTRON_CONSTANT = 8.977e-3  # MHz * sqrt(cm^-3)
 
+def in_jupyter():
+    """Detect if code is running in a Jupyter Notebook."""
+    try:
+        from IPython import get_ipython
+        shell = get_ipython().__class__.__name__
+        return shell == 'ZMQInteractiveShell'
+    except:
+        return False
 
-def run_cme_analysis(path, file_pattern, harmonic=2, newkirk=1.8,
+def set_backend_for_interactivity():
+    """Set backend to 'qt' or fallback in Jupyter for interactive plots."""
+    if in_jupyter():
+        try:
+            from IPython import get_ipython
+            get_ipython().run_line_magic('matplotlib', 'qt')
+            print("Using Qt backend for interactive plotting.")
+        except Exception as e:
+            try:
+                get_ipython().run_line_magic('matplotlib', 'widget')
+                print("Qt backend failed. Using widget backend instead.")
+            except:
+                print("Could not set interactive backend in Jupyter.")
+
+# Set backend before plotting
+set_backend_for_interactivity()
+
+def run_cme_Newkirk_analysis(path, file_pattern, harmonic=2, newkirk=1.8,
                      zoom=[700, 1700, 30, 70], vmin=-5, vmax=25):
     """
     Main function to process FITS files and perform interactive CME speed analysis.
@@ -65,7 +94,7 @@ def run_cme_analysis(path, file_pattern, harmonic=2, newkirk=1.8,
         Maximum value for dynamic spectrum color scaling.
     """
 
-    paths = glob.glob(path + file_pattern)
+    paths = glob.glob(os.path.join(path, file_pattern))
     if not paths:
         raise FileNotFoundError("No FITS files found matching pattern.")
 
@@ -87,7 +116,7 @@ def run_cme_analysis(path, file_pattern, harmonic=2, newkirk=1.8,
     h, m, s = map(float, T0.split(":"))
     t_start = h * 3600 + m * 60 + s
 
-    # Load data
+    # Load and concatenate data
     data = np.hstack([read_fits_data(f) for f in paths])
     time_s = np.arange(data.shape[1]) * dt
     time_hours = (t_start + time_s) / 3600.0
@@ -97,24 +126,23 @@ def run_cme_analysis(path, file_pattern, harmonic=2, newkirk=1.8,
     extent = (time_s[0], time_s[-1], frequency[-1], frequency[0])
     fig, ax = plt.subplots(figsize=(10, 6))
     im = ax.imshow(dflat, extent=extent, aspect='auto',
-                   cmap=cm.CMRmap, norm=plt.Normalize(vmin, vmax))
+                   cmap='jet', norm=plt.Normalize(vmin, vmax))
     ax.set_title(title, fontsize=14)
     ax.set_xlabel(f"Time [s] after {T0} UT", fontsize=12)
     ax.set_ylabel("Frequency [MHz]", fontsize=12)
     ax.axis(zoom)
     ax.tick_params(labelsize=12)
 
-    # Interactive callback setup
     coords = []
 
     def onclick(event):
         if event.button == 1:
-            # Left-click: save coordinate
+            # Left-click
             coords.append((event.xdata, event.ydata))
             ax.plot(event.xdata, event.ydata, 'wo')
             fig.canvas.draw()
         elif event.button == 3:
-            # Right-click: finalize and analyze
+            # Right-click to end
             fig.canvas.mpl_disconnect(cid)
             plt.savefig(paths[0] + '.spectrum.png')
             compute_and_plot(coords, frequency, harmonic, newkirk, paths[0])
@@ -122,6 +150,7 @@ def run_cme_analysis(path, file_pattern, harmonic=2, newkirk=1.8,
     cid = fig.canvas.mpl_connect('button_press_event', onclick)
     print("Left click to mark points. Right click to analyze.")
 
+    plt.show()
 
 def compute_and_plot(coords, frequency, harmonic, newkirk, output_prefix):
     """Compute parameters from selected points and generate plots + results."""
@@ -161,13 +190,13 @@ def compute_and_plot(coords, frequency, harmonic, newkirk, output_prefix):
     fig.tight_layout()
     plt.savefig(output_prefix + '.results.png')
 
-    # Save results
+    # Save table
     with open(output_prefix + '.table.txt', 'w') as f:
         f.write("T[s], F[MHz], Ne[cm^-3], Rs[Rsun]\n")
         for i in range(len(freq)):
             f.write(f"{time[i]:.2f}, {freq[i]:.2f}, {Ne[i]:.1f}, {rs[i]:.2f}\n")
 
-    print("\nSpeed Statistics:")
+    print("\n Speed Statistics (using Newkirk model):")
     print(f"Mean speed   : {np.mean(vr):.1f} km/s")
     print(f"Median speed : {np.median(vr):.1f} km/s")
     v_first_order = (rs[-1] - rs[0]) / (time[-1] - time[0]) * RSUN_KM
